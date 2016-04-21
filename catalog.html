@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="app.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div ng-app="shomiMovieList" ng-controller="myCtrl">
+
+  <h1>Featured Movies</h1>
+  <div id="movieContainer">
+
+    <p>Order By: 
+      <a data-ng-click="orderProp = 'Item.Title'">Title</a> | 
+      <a data-ng-click="orderProp = 'Item.RunTimeSec'">Duration</a> | 
+      <a data-ng-click="orderProp = '-Item.ReleaseYear'">Release Year</a>
+    </p>
+
+    <div class="movie" ng-repeat="x in movies | orderBy: orderProp | startFrom:currentPage*pageSize | limitTo:pageSize" ng-init="movie = x.Item; coverURL = movie.Images;" ng-mouseenter="hover(x)" ng-mouseleave="hover(x)">
+      <img ng-repeat="img in coverURL | filter: { Type: 1 } | limitTo: 1" ng-src="{{img.ImageId}}">
+      <div class="metadata" ng-show="x.showMeta">
+        <h3>Released: {{movie.ReleaseYear}}</h3>
+        <h4 ng-if="movie.RunTimeSec">Length: {{movie.RunTimeSec | secondsToDateTime | date:'HH:mm:ss'}}</h4>
+        <h2>{{movie.Title}}</h2>
+      </div>
+    </div>
+
+    <div class="pagination">
+      <a ng-class="{disabled: currentPage == 0}" ng-click="currentPage=currentPage-1"><</a>
+      <ul>
+        <li ng-repeat="i in paginationArray(numberOfPages) track by $index" ng-class="{active: $index == currentPage}">
+          <span ng-click="$parent.currentPage=$index"></span>
+        </li>
+      </ul>
+      <a ng-class="{disabled: currentPage >= movies.length/pageSize - 1}" ng-click="currentPage=currentPage+1">></a>
+    </div>
+
+  </div>
+
+
+</body>
+</html>
